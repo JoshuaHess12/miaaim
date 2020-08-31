@@ -99,7 +99,7 @@ now_zero = [test[0],test[1]]
 now_one = [test[2],test[3]]
 //Merge the channels
 all_reg = Channel.from([now_zero,now_one])
-//all_reg.print()
+all_reg.print()
 
 
 

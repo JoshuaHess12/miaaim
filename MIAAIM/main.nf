@@ -19,6 +19,8 @@ paths = miaaim_steps.collect{ "${params.in}/$it" }
 //get yaml parameters for the prep module -- step 0 input
 s0in = Channel.fromPath("${params.in}/HDIprep/*.yaml")
 
+
+
 //define step 0
 process RawInput {
 
@@ -37,16 +39,18 @@ process RawInput {
 }
 
 
+
 //define step 1
 process HDIprep {
-	publishDir "${paths[1]}/HDIprep", mode: 'copy',  pattern: "*.nii"
-	publishDir "${paths[1]}/HDIprep", mode: 'copy',  pattern: "*.csv"
+	//publishDir "${paths[1]}/HDIprep", mode: 'copy',  pattern: "*.nii"
+	publishDir "${paths[1]}/$x.baseName", mode: 'copy',  pattern: "*.nii"
+	//publishDir "${paths[1]}/HDIprep", mode: 'copy',  pattern: "*.csv"
 
   input:
-  tuple file (x), og_im from s0out
+	tuple file (x), pars from s0out
 
   output:
-	tuple og_im, file ("*.nii") into s1out
+	tuple val ("$x.baseName"), file ("*.nii") into s1out
   //tuple val("*.nii"), val x into s1out
 	//file ("*.nii") into s1out
 	//file "$x" into orig_ch
@@ -59,13 +63,6 @@ process HDIprep {
 }
 
 
-//s1out.print { it }
-results = s1out.map { it -> [ "${it[0]}", file(it[1]) ] }
-results.print {it}
-//test = results.toList()
-
-
-
 
 //get the yaml file for global registration parameters
 globreg_par = file("${paths[2]}/*.yaml")
@@ -75,49 +72,87 @@ order_yaml = new FileInputStream(new File( globreg_par[0].toString() ))
 order_yaml = new Yaml().load(order_yaml)
 //println order_yaml
 
-
 //create empty tuple
 prop_order = []
 //update the list with index and raw image
-order_yaml.RegistrationOrder.eachWithIndex { item, index -> prop_order.add( [ "$item", index ] ) }
+order_yaml.RegistrationOrder.eachWithIndex { item, index -> prop_order.add( [ file(item), index ] ) }
 //create a channel from the propagation order
 prop_order = Channel.from( tuple (prop_order) )
-prop_order.print { it }
-//s1out.print { it }
-
-//combine s1out with propagation order
-//results.join(prop_order, remainder: true, by: 0).println()
-
-//a = Channel.from ([["test",1],["now",3]])
-//b = Channel.from ([["test",2],["now",4]])
-//a.join(b, remainder: true, by: 0).println()
+//println prop_order
 
 
-//create list of size of registration parameters  (n-1 images) (-1 for 0 indexing purposes)
-range = 0..order_yaml.RegistrationParameters.size()-1
-//create empty map to store registration order
-reg_order = [:]
-//add values to the map to indicate registration fixed and moving images propagating with order
-range.each( { reg_order[it] = [order_yaml.RegistrationOrder[it], order_yaml.RegistrationOrder[it+1]] } )
-//println reg_order
 
+//create a channel that has basenames with original filenames
+//define step 2a
+process HDIregGetOrder{
 
-//define step 2
-//process HDIreg {
-//	publishDir "${paths[2]}/HDIreg", mode: 'copy',  pattern: "*.txt"
+  input:
+	tuple file (x), ord from prop_order
 
-//  input:
-//  tuple file (og_im), file (proc_im) from s1out
-
-//  output:
-//	tuple og_im, file ("*.txt") into s1out
+  output:
+	tuple val ("${x.baseName}"), "$x", ord into s2out
   //tuple val("*.nii"), val x into s1out
 	//file ("*.nii") into s1out
 	//file "$x" into orig_ch
 
-//	when: idxStop >= 2
+	when: idxStop >= 1
 
+  """
+  """
+}
+
+
+
+////////////////////////////////////////////////////////////////////
+//!!!!!!!!!!Temporary for now will only work with 3 images!!!!!!!!!!
+//create channel for the propagating order of registration
+prop_chan = s1out.join(s2out, remainder: true, by: 0)
+//prop_chan.print()
+
+prop_chan
+	.branch {it ->
+	zero: it[3] == 0
+	one: it[3] == 1
+	two: it[3] == 2
+	}
+	.set {result}
+
+//result.zero.view { "$it is small" }
+(cp_1,cp_2) = result.one.into(2)
+//cp_1.view { "$it is small" }
+
+//create a list from the results branches
+now_zero = result.zero.flatten().concat( cp_1.flatten() ).toList()
+now_one = cp_2.flatten().concat( result.two.flatten() ).toList()
+
+//concatenate the lists to create registration pairs to input to HDIreg
+all_reg = now_zero.concat( now_one )
+//all_reg.view { "$it is small" }
+//!!!!!!!!!!Temporary for now will only work with 3 images!!!!!!!!!!
+////////////////////////////////////////////////////////////////////
+
+
+
+//define step 2b
+process HDIreg {
+//	publishDir "${paths[2]}", mode: 'copy',  pattern: "*.txt"
+	publishDir "${paths[2]}/$m_ord"+"-"+"$f_ord", mode: 'copy', pattern: "*.txt"
+
+	input:
+	tuple( val(m_id), file(m_proc), file(m_og), val(m_ord), val(f_id), file(f_proc), file(f_og), val(f_ord) ) from all_reg
+
+	output:
+	tuple val("$m_id"), val("$f_id"), file ("*.txt") into s3out
+//	tuple val("$m_id"), val("$f_id") into s3aout
+//	tuple val("$m_id"), val("$f_id") into s3out
+
+	when: idxStop >= 2
+
+	"""
+	cat > filename.txt
+	"""
 //  """
 //  python3 "/Users/joshuahess/Desktop/Methods High DImensional Imaging/HDIprep/HDIprep/command_hdi_prep.py" --path_to_yaml "${x}" --out_dir .
 //  """
-//}
+}
+s3out.print()
