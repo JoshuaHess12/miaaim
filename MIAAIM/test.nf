@@ -19,7 +19,7 @@ paths = miaaim_steps.collect{ "${params.in}/$it" }
 //get yaml parameters for the prep module -- step 0 input
 s0in = Channel.fromPath("${params.in}/HDIprep/*.yaml")
 
-
+//s0in.print()
 
 //define step 1
 process HDIprep {
@@ -34,93 +34,93 @@ process HDIprep {
 	//file ("*.nii") into s1out
 	//file "$x" into orig_ch
 
-	when: idxStop >= 1
+	when: idxStop <= 1
 
   """
-  python3 "/Users/joshuahess/Desktop/Methods High DImensional Imaging/HDIprep/HDIprep/command_hdi_prep.py" --path_to_yaml "${x}" --out_dir .
+  python3 ~/Desktop/miaaim/HDIprep/HDIprep/command_hdi_prep.py --path_to_yaml "${x}" --out_dir .
   """
 }
 
 
 //get the yaml file for global registration parameters
-globreg_par = file("${paths[2]}/*.yaml")
+//globreg_par = file("${paths[2]}/*.yaml")
 //read the yaml file -- currently read only single yaml file in the folder!
-order_yaml = new FileInputStream(new File( globreg_par[0].toString() ))
+//order_yaml = new FileInputStream(new File( globreg_par[0].toString() ))
 //get map from yaml
-order_yaml = new Yaml().load(order_yaml)
+//order_yaml = new Yaml().load(order_yaml)
 //println order_yaml
 
 //create empty tuple
-prop_order = []
+//prop_order = []
 //update the list with index and raw image
-order_yaml.RegistrationOrder.eachWithIndex { item, index -> prop_order.add( [ file(item), index ] ) }
+//order_yaml.RegistrationOrder.eachWithIndex { item, index -> prop_order.add( [ file(item), index ] ) }
 //create a channel from the propagation order
-prop_order = Channel.from( tuple (prop_order) )
+//prop_order = Channel.from( tuple (prop_order) )
 
 
 
 //create a channel that has basenames with original filenames
 //define step 1
-process GetPropagationOrder {
+//process GetPropagationOrder {
 
-  input:
-	tuple file (x), ord from prop_order
+//  input:
+//	tuple file (x), ord from prop_order
 
-  output:
-	tuple val ("${x.baseName}"), "$x", ord into s2out
+//  output:
+//	tuple val ("${x.baseName}"), "$x", ord into s2out
   //tuple val("*.nii"), val x into s1out
 	//file ("*.nii") into s1out
 	//file "$x" into orig_ch
 
-	when: idxStop >= 1
+//	when: idxStop >= 1
 
-  """
-  """
-}
+//  """
+//  """
+//}
 
 //create channel for the propagating order of registration
-prop_chan = s1out.join(s2out, remainder: true, by: 0)
+//prop_chan = s1out.join(s2out, remainder: true, by: 0)
 
 
-prop_chan
-	.branch {it ->
-	zero: it[3] == 0
-	one: it[3] == 1
-	two: it[3] == 2
-	}
-	.set {result}
+//prop_chan
+//	.branch {it ->
+//	zero: it[3] == 0
+//	one: it[3] == 1
+//	two: it[3] == 2
+//	}
+//	.set {result}
 
-(cp_1,cp_2) = result.one.into(2)
+//(cp_1,cp_2) = result.one.into(2)
 
 
 //create a list from the results branches
-test = [result.zero, cp_1, cp_2, result.two]
-now_zero = [test[0],test[1]]
-now_one = [test[2],test[3]]
+//test = [result.zero, cp_1, cp_2, result.two]
+//now_zero = [test[0],test[1]]
+//now_one = [test[2],test[3]]
 //Merge the channels
-all_reg = Channel.from([now_zero,now_one])
-all_reg.print()
+//all_reg = Channel.from([now_zero,now_one])
+//all_reg.print()
 
 
 
 //define step 1
-process NowGo {
+//process NowGo {
 
-  input:
-	tuple x,y from all_reg
+//  input:
+//	tuple x,y from all_reg
 
-  output:
-	stdout into s3out
+//  output:
+//	stdout into s3out
   //tuple val("*.nii"), val x into s1out
 	//file ("*.nii") into s1out
 	//file "$x" into orig_ch
 
-	when: idxStop >= 1
-	"""
-  """
-}
+//	when: idxStop >= 1
+//	"""
+//  """
+//}
 
-s3out.print()
+//s3out.print()
 
 
 //a = prop_chan.toSortedList( { a, b -> a[3] <=> b[3] } )

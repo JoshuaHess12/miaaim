@@ -22,7 +22,7 @@ s0in = Channel.fromPath("${params.in}/HDIprep/*.yaml")
 
 
 //define step 0
-process RawInput {
+process HDIprepInput {
 
   input:
   file (x) from s0in
@@ -30,10 +30,10 @@ process RawInput {
   output:
 	tuple file ("$x"), stdout into s0out
 
-	when: idxStart >= 0
+	when: idxStart <= 1
 
 	"""
-	python3 "/Users/joshuahess/Desktop/Methods High DImensional Imaging/HDIprep/HDIprep/nf-parse-og-yaml.py" --path_to_yaml "${x}"
+	python3 "/Users/joshuahess/Desktop/miaaim/HDIprep/HDIprep/nf-parse-og-yaml.py" --path_to_yaml "${x}"
 	"""
 
 }
@@ -55,10 +55,10 @@ process HDIprep {
 	//file ("*.nii") into s1out
 	//file "$x" into orig_ch
 
-	when: idxStop >= 1
+	when: idxStop <= 1
 
   """
-  python3 "/Users/joshuahess/Desktop/Methods High DImensional Imaging/HDIprep/HDIprep/command_hdi_prep.py" --path_to_yaml "${x}" --out_dir .
+  python3 "/Users/joshuahess/Desktop/miaaim/HDIprep/HDIprep/command_hdi_prep.py" --path_to_yaml "${x}" --out_dir .
   """
 }
 
@@ -95,12 +95,11 @@ process HDIregGetOrder{
 	//file ("*.nii") into s1out
 	//file "$x" into orig_ch
 
-	when: idxStop >= 1
+	when: idxStop <= 1
 
   """
   """
 }
-
 
 
 ////////////////////////////////////////////////////////////////////
@@ -136,23 +135,20 @@ all_reg = now_zero.concat( now_one )
 //define step 2b
 process HDIreg {
 //	publishDir "${paths[2]}", mode: 'copy',  pattern: "*.txt"
-	publishDir "${paths[2]}/$m_ord"+"-"+"$f_ord", mode: 'copy', pattern: "*.txt"
+	publishDir "${paths[2]}/$m_id", mode: 'copy', pattern: "*.txt"
 
 	input:
 	tuple( val(m_id), file(m_proc), file(m_og), val(m_ord), val(f_id), file(f_proc), file(f_og), val(f_ord) ) from all_reg
 
 	output:
-	tuple val("$m_id"), val("$f_id"), file ("*.txt") into s3out
-//	tuple val("$m_id"), val("$f_id") into s3aout
+//	tuple val("$m_id"), val("$f_id"), file ("*.nii") into s3out
+	tuple val("$m_id"), val("$f_id") into s3out
 //	tuple val("$m_id"), val("$f_id") into s3out
 
-	when: idxStop >= 2
+	when: idxStop <= 2
 
 	"""
-	cat > filename.txt
+	python3 "/Users/joshuahess/Desktop/miaaim/HDIreg/HDIreg/command_elastix.py" --fixed "${f_proc}" --moving "${m_proc}" --out_dir . --p "/Users/joshuahess/Desktop/MIAAIM_nf/HDIreg/aMI_affine.txt"
 	"""
-//  """
-//  python3 "/Users/joshuahess/Desktop/Methods High DImensional Imaging/HDIprep/HDIprep/command_hdi_prep.py" --path_to_yaml "${x}" --out_dir .
-//  """
 }
 s3out.print()
