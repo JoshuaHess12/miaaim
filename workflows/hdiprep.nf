@@ -1,18 +1,18 @@
 process hdiprep {
 	// export to HDIprep export folder
-	publishDir "$params.pubDir/$x.baseName", mode: 'copy',  pattern: "*.nii"
+	publishDir "$params.pubDir", mode: 'copy',  pattern: "*processed.nii"
 
   input:
-	file (x)
+	tuple val (id), file (im), file (pars)
 
   output:
-	tuple val ("$x.baseName"), file ("*.nii")
+	tuple val (id), file ("$im"), file ("*processed.nii")
 
 
-	when: params.idxStop <= 1
+	when: params.idxStart <= 1 && params.idxStop >= 1
 
   """
-  python "/app/command_hdi_prep.py" --path_to_yaml "${x}" --out_dir .
+  python "/app/command_hdi_prep.py" --im "${im}" --pars "${pars}" --out_dir .
   """
 
 }

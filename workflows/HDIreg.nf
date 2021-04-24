@@ -1,69 +1,127 @@
-//create a channel that has basenames with original filenames
-//define step 2a
-process HDIregGetOrder{
+process elastix {
 
-  input:
-	tuple file (x), ord from prop_order
-
-  output:
-	tuple val ("${x.baseName}"), "$x", ord into s2out
-  //tuple val("*.nii"), val x into s1out
-	//file ("*.nii") into s1out
-	//file "$x" into orig_ch
-
-	when: idxStop <= 1
-
-  """
-  """
-}
-
-
-////////////////////////////////////////////////////////////////////
-//!!!!!!!!!!Temporary for now will only work with 3 images!!!!!!!!!!
-//create channel for the propagating order of registration
-prop_chan = s1out.join(s2out, remainder: true, by: 0)
-//prop_chan.print()
-
-prop_chan
-	.branch {it ->
-	zero: it[3] == 0
-	one: it[3] == 1
-	two: it[3] == 2
-	}
-	.set {result}
-
-//result.zero.view { "$it is small" }
-(cp_1,cp_2) = result.one.into(2)
-//cp_1.view { "$it is small" }
-
-//create a list from the results branches
-now_zero = result.zero.flatten().concat( cp_1.flatten() ).toList()
-now_one = cp_2.flatten().concat( result.two.flatten() ).toList()
-
-//concatenate the lists to create registration pairs to input to HDIreg
-all_reg = now_zero.concat( now_one )
-//all_reg.view { "$it is small" }
-//!!!!!!!!!!Temporary for now will only work with 3 images!!!!!!!!!!
-////////////////////////////////////////////////////////////////////
-
-
-
-//define step 2b
-process HDIreg {
-//	publishDir "${paths[2]}", mode: 'copy',  pattern: "*.txt"
-	publishDir "${paths[2]}/$m_id", mode: 'copy', pattern: "*.nii"
-
+	publishDir "$params.pubDir/elastix", mode: 'copy', pattern: "*.txt"
+	publishDir "$params.pubDir/elastix", mode: 'copy', pattern: "*.nii"
 	input:
-	tuple( val(m_id), file(m_proc), file(m_og), val(m_ord), val(f_id), file(f_proc), file(f_og), val(f_ord) ) from all_reg
+	tuple( val(m_id), path(m_in), path(m_proc), val(m_ord), val(f_id), path(f_in), path(f_proc), val(f_ord), val(pars) )
 
 	output:
-//	tuple val("$m_id"), val("$f_id"), file ("*.nii") into s3out
-	tuple val("$m_id"), val("$f_id") into s3out
-//	tuple val("$m_id"), val("$f_id") into s3out
+	tuple val(m_id), val(m_ord), file ("*.nii"), file ("*.txt")
 
-	when: idxStop <= 2
+	when: params.idxStart <= 2 && params.idxStop >=2
 
 	"""
-	python3 "/Users/joshuahess/Desktop/miaaim/HDIreg/HDIreg/command_elastix.py" --fixed "${f_proc}" --moving "${m_proc}" --out_dir "/Users/joshuahess/Desktop/MIAAIM_nf/HDIreg" --p "/Users/joshuahess/Desktop/MIAAIM_nf/HDIreg/aMI_affine.txt"
+	python "/app/command_elastix.py" --fixed "${f_proc}" --moving "${m_proc}" --out_dir . ${pars}
 	"""
+}
+
+process transformix {
+
+	publishDir "$params.pubDir/transformix", mode: 'copy', pattern: "*result.nii"
+
+	input:
+	tuple( val (m_id), val (m_ord), path(res), val (m_id_Reapeat), path(m_og), path(yaml), val(pars) )
+
+	output:
+	tuple path("${m_og}"), path("${res}"), path ("*result.nii")
+
+	when: params.idxStart <= 2 && params.idxStop >=2 && params.transformix
+
+	"""
+	python "/app/command_transformix.py" --in_im "${m_og}" --out_dir . ${pars}
+	"""
+}
+
+// helper function to extract image ID from filename
+def getID (f, delim, i) {
+		tuple( f.getBaseName().toString().split(delim).head(), f, i )
+}
+
+// helper function to extract image ID from filename
+def getOrder (f, delim, i) {
+		tuple( f.getBaseName().toString().split(delim).head(), i )
+}
+
+// helper function to extract image ID from filename
+def removePortions (a,b,c,d,e,f) {
+		tuple( a,b,e,f )
+}
+
+// helper function to flatten list and convert to tuple
+def mergeList ( l ) {
+	tuple( l.flatten() )
+}
+
+// define primary hdireg workflow
+workflow hdireg {
+  take:
+	rawin
+	prepout
+	pars
+
+  main:
+
+	// get the yaml file for global registration parameters
+	// globreg_par = file("${params.in}/*.yaml")
+	// read the yaml file -- currently read only single yaml file in the folder!
+	// order_yaml = new FileInputStream(new File( globreg_par[0].toString() ))
+	// get map from yaml
+	// order_yaml = new Yaml().load(order_yaml)
+	//println order_yaml
+
+	// create empty tuple
+	// prop_order = []
+	// update the list with index and raw image
+	//order_yaml.RegistrationOrder.eachWithIndex { item, index -> prop_order.add( [ file(item), index ] ) }
+
+	//create a channel from the propagation order
+	//prop_order = Channel.from( tuple (prop_order) )
+	if( params.idxStart <= 2 && params.idxStop >=2 ) {
+
+		// initialize a list to store the fixed and moving image pairs in
+		prop_order = []
+		// create channel with the fixed and moving images
+		pair = ["${params.fixedImage}", "${params.movingImage}"]
+		//println pair
+		// append index
+		pair.eachWithIndex { item, index -> prop_order.add( [ file(item), index ] ) }
+		// create channel from the pair
+		prop_order = Channel.from( tuple (prop_order) )
+
+		// append the image base name ID to existing tuples
+		id_img = prop_order.map{ f, i -> getOrder(f,'\\.', i) }
+		//id_img.view()
+
+		rawin.join(prepout, remainder: true, by: 0).join(id_img).map{ a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {test}
+
+		//test.toSortedList( { a, b -> a[2] <=> b[2] } ).flatten().collate( 4 ).collate( 2, 1, false).map{ f ->
+		//	mergeList( f ) }.set {tmp}
+
+		test.toSortedList( { a, b -> a[2] <=> b[2] } ).flatten().collate( 4 ).collate( 2, 1, false).mix(pars).map{ f ->
+			mergeList( f ) }.set {tmp}
+		tmp.view()
+
+
+		// register fixed and moving image pairs
+		//elastix(tmp)
+
+		//elastix.out.view()
+		// organize the results
+		//elastix.out.toSortedList( { a, b -> a[0] <=> b[0] } ).set { test }
+
+		//elastix.out.map{ f -> mergeList( f ) }.set{ bb }
+
+		// flatten the array and capture necessary components
+
+		//bb.flatten().take(2).mix( bb.flatten().last() ).toList().set { out }
+
+		// run transformix on the elastix output
+		//transformix(elastix.out)
+		//bb.view()
+	}
+	else {
+		tmp = "no registration performed"
+	}
+	emit:
+	tmp
 }
