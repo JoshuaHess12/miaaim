@@ -9,7 +9,7 @@ import org.yaml.snakeyaml.Yaml
 // miaaim pipeline steps
 miaaim_steps = ["input",			// raw input
 		"hdiprep",			// preparation
-		"hdireg"]     		// registration
+		"hdireg"]     			// registration
 
 // identify starting and stopping indices
 params.idxStart = miaaim_steps.indexOf( params.startAt )
