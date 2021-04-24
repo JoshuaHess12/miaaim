@@ -57,7 +57,8 @@ workflow hdireg {
   take:
 	rawin
 	prepout
-	pars
+	elastixpars
+	transformixpars
 
   main:
 
