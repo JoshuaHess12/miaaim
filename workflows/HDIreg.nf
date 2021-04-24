@@ -1,12 +1,23 @@
 process elastix {
 
+	tag "hdireg-elastix"
+
+	// define output patterns and directory
 	publishDir "$params.pubDir/elastix", mode: 'copy', pattern: "*.txt"
 	publishDir "$params.pubDir/elastix", mode: 'copy', pattern: "*.nii"
+
+	// establish command and execution log outputs
+	publishDir "${params.parsDir}", mode: 'copy', pattern: '.command.sh',
+		saveAs: {fn -> "${tag}.sh"}
+	publishDir "${params.parsDir}", mode: 'copy', pattern: '.command.log',
+		saveAs: {fn -> "${tag}.log"}
+
 	input:
 	tuple( val(m_id), path(m_in), path(m_proc), val(m_ord), val(f_id), path(f_in), path(f_proc), val(f_ord), val(pars) )
 
 	output:
-	tuple val(m_id), val(m_ord), file ("*.nii"), file ("*.txt")
+	tuple val(m_id), val(m_ord), file ("*.nii"), file ("*.txt"), emit: regout
+	tuple path('.command.sh'), path('.command.log')
 
 	when: params.idxStart <= 2 && params.idxStop >=2
 
@@ -17,13 +28,21 @@ process elastix {
 
 process transformix {
 
-	publishDir "$params.pubDir/transformix", mode: 'copy', pattern: "*result.nii"
+	tag "hdireg-transformix"
 
+	publishDir "$params.pubDir/transformix", mode: 'copy', pattern: "*result.nii"
+	// establish command and execution log outputs
+	publishDir "${params.parsDir}", mode: 'copy', pattern: '.command.sh',
+		saveAs: {fn -> "${tag}.sh"}
+	publishDir "${params.parsDir}", mode: 'copy', pattern: '.command.log',
+		saveAs: {fn -> "${tag}.log"}
+		
 	input:
 	tuple( val (m_id), val (m_ord), path(res), val (m_id_Reapeat), path(m_og), path(yaml), val(pars) )
 
 	output:
-	tuple path("${m_og}"), path("${res}"), path ("*result.nii")
+	tuple path("${m_og}"), path("${res}"), path ("*result.nii"), emit: transout
+	tuple path('.command.sh'), path('.command.log')
 
 	when: params.idxStart <= 2 && params.idxStop >=2 && params.transformix
 

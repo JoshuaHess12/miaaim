@@ -3,9 +3,6 @@
 // enable new DSL to separate the definition of a process from its invocation
 nextflow.enable.dsl=2
 
-// import external modules
-import org.yaml.snakeyaml.Yaml
-
 // miaaim pipeline steps
 miaaim_steps = ["input",			// raw input
 		"hdiprep",			// preparation
@@ -20,7 +17,7 @@ paths = miaaim_steps.collect{ "${params.in}/$it" }
 // create parameter output directory
 params.parsDir = file("${params.in}/docs")
 
-// set default input parameters
+// set default input parameters for workflows
 params.fixedImage = 'fixed.ext'
 params.movingImage = 'moving.ext'
 params.fixedPars = 'fixed'
@@ -41,8 +38,8 @@ if( params.idxStop >= 2 && params.movingImage == '' )
 
 // import individual workflows and add output directories to parameters
 include {hdiprep}   			from './workflows/hdiprep'     addParams(pubDir: paths[1])
-include {elastix}   				from './workflows/hdireg'      addParams(pubDir: paths[2])
-include {transformix}   				from './workflows/hdireg'      addParams(pubDir: paths[2])
+include {elastix}   			from './workflows/hdireg'      addParams(pubDir: paths[2])
+include {transformix}   	from './workflows/hdireg'      addParams(pubDir: paths[2])
 
 // helper function to extract image ID from filename
 def getID (f, delim, i) {
@@ -134,10 +131,10 @@ id_img = prop_order.map{ f, i -> getOrder(f,'\\.', i) }
 
 // run primary miaaim workflow
 workflow {
-		// prepare images with the hdi-prep module
+	// prepare images with the hdi-prep module
     hdiprep(s0in)
 
-		s0in.join(hdiprep.out, remainder: true, by: 0).join(id_img).map{ a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {test}
+		s0in.join(hdiprep.out.prepout, remainder: true, by: 0).join(id_img).map{ a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {test}
 
 		test.toSortedList( { a, b -> a[3] <=> b[3] } ).flatten().collate( 4 ).collate( 2, 1, false).map{ f ->
 			mergeList( f ) }.flatten().concat(pars).collect().set {tmp}
@@ -146,7 +143,7 @@ workflow {
 		elastix(tmp)
 		//elastix.out.flatten().take(3).concat( elastix.out.flatten().first() ).set {tuple ( testing ) }
 		//testing.view()
-		elastix.out.flatten().take(3).concat( elastix.out.flatten().first() ).toList().join(s0in).concat(transpars).collect().set {trans_in}
+		elastix.out.regout.flatten().take(3).concat( elastix.out.regout.flatten().first() ).toList().join(s0in).concat(transpars).collect().set {trans_in}
 		trans_in.view()
 
 
