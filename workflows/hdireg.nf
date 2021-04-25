@@ -36,7 +36,7 @@ process transformix {
 		saveAs: {fn -> "${tag}.sh"}
 	publishDir "${params.parsDir}", mode: 'copy', pattern: '.command.log',
 		saveAs: {fn -> "${tag}.log"}
-		
+
 	input:
 	tuple( val (m_id), val (m_ord), path(res), val (m_id_Reapeat), path(m_og), path(yaml), val(pars) )
 
@@ -81,21 +81,6 @@ workflow hdireg {
 
   main:
 
-	// get the yaml file for global registration parameters
-	// globreg_par = file("${params.in}/*.yaml")
-	// read the yaml file -- currently read only single yaml file in the folder!
-	// order_yaml = new FileInputStream(new File( globreg_par[0].toString() ))
-	// get map from yaml
-	// order_yaml = new Yaml().load(order_yaml)
-	//println order_yaml
-
-	// create empty tuple
-	// prop_order = []
-	// update the list with index and raw image
-	//order_yaml.RegistrationOrder.eachWithIndex { item, index -> prop_order.add( [ file(item), index ] ) }
-
-	//create a channel from the propagation order
-	//prop_order = Channel.from( tuple (prop_order) )
 	if( params.idxStart <= 2 && params.idxStop >=2 ) {
 
 		// initialize a list to store the fixed and moving image pairs in
