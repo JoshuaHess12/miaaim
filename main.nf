@@ -46,6 +46,7 @@ include {hdiprep}   			from './workflows/hdiprep'     addParams(pubDir: paths[1]
 include {elastix}   			from './workflows/hdireg'      addParams(pubDir: paths[2])
 include {transformix}   	from './workflows/hdireg'      addParams(pubDir: paths[2])
 
+// define function blocks to use in the workflow
 // helper functions for finding intermediate processed images prior to registration
 findFiles  = { p, path, ife -> p ?
 	      Channel.fromPath(path).ifEmpty(ife) : Channel.empty() }
@@ -59,24 +60,6 @@ def movingPrecomp (f, delim) {
 def fixedPrecomp (f, delim) {
 		tuple( f.getSimpleName().toString().split(delim).head(), file("${params.in}/input/${params.fixedImage}"), f, 1 )
 }
-
-// extract preprocessed images if starting step is after input and before registation
-// note here that the default behavior currently requires preprocessed images to end
-// with the "_processed" suffix. This is the default output from hdiprep and must be
-// followed for users inputting their own preprocessed data
-pre_moving = findFiles(params.idxStart == 2 && params.idxStop >= 2,
-		      "${paths[1]}"+"/"+"${params.movingImage.split('\\.').head()}"+"_processed.nii",
-		      {error "No processed moving image in ${paths[1]}"})
-pre_moving.map{ f -> movingPrecomp(f,'\\_processed') }.set {a}
-
-pre_fixed = findFiles(params.idxStart == 2 && params.idxStop >= 2,
-		      "${paths[1]}"+"/"+"${params.fixedImage.split('\\.').head()}"+"_processed.nii",
-		      {error "No processed fixed image in ${paths[1]}"})
-pre_fixed.map{ f -> fixedPrecomp(f,'\\_processed') }.set{b}
-
-// concatenate the preprocessed files to match the tuple structure of hdiprep outputting
-a.concat(b).set {pre_prep}
-
 // helper function to extract image ID from filename
 def getID (f, delim, i) {
 		tuple( f.getBaseName().toString().split(delim).head(), f, i )
@@ -133,7 +116,22 @@ def mergeList ( l ) {
 	tuple( l.flatten() )
 }
 
+// extract preprocessed images if starting step is after input and before registation
+// note here that the default behavior currently requires preprocessed images to end
+// with the "_processed" suffix. This is the default output from hdiprep and must be
+// followed for users inputting their own preprocessed data
+pre_moving = findFiles(params.idxStart == 2 && params.idxStop >= 2,
+		      "${paths[1]}"+"/"+"${params.movingImage.split('\\.').head()}"+"_processed.nii",
+		      {error "No processed moving image in ${paths[1]}"})
+pre_moving.map{ f -> movingPrecomp(f,'\\_processed') }.set {a}
 
+pre_fixed = findFiles(params.idxStart == 2 && params.idxStop >= 2,
+		      "${paths[1]}"+"/"+"${params.fixedImage.split('\\.').head()}"+"_processed.nii",
+		      {error "No processed fixed image in ${paths[1]}"})
+pre_fixed.map{ f -> fixedPrecomp(f,'\\_processed') }.set{b}
+
+// concatenate the preprocessed files to match the tuple structure of hdiprep outputting
+a.concat(b).set {pre_prep}
 
 // create channel with images and parameter pairs (collate to pairs of 2)
 Channel.from( file("${params.in}/input/${params.fixedImage}"), file("${params.in}/input/${params.fixedPars}"),
@@ -198,12 +196,10 @@ workflow {
 workflow.onComplete {
     // create directory for parameters
 		file("${params.parsDir}").mkdirs()
-    // Store parameters used
+    // store parameters used
     file("${params.parsDir}/miaaim-pars.yml").withWriter{ out ->
 	out.println "githubTag: $workflow.revision";
 	out.println "githubCommit: $workflow.commitId";
-	out.println "runName: $workflow.runName";
-	out.println "sessionId: $workflow.sessionId";
 	params.each{ key, val ->
 	    if( key.indexOf('-') == -1 )
 	    out.println "$key: $val"
