@@ -43,8 +43,7 @@ params.parsDir = file("${params.in}/docs")
 
 // import individual workflows and add output directories to parameters
 include {hdiprep}   			from './workflows/hdiprep'     addParams(pubDir: paths[1])
-include {elastix}   			from './workflows/hdireg'      addParams(pubDir: paths[2])
-include {transformix}   	from './workflows/hdireg'      addParams(pubDir: paths[2])
+include {hdireg}   				from './workflows/hdireg'      addParams(pubDir: paths[2])
 
 // define function blocks to use in the workflow
 // these are all currently functions that allow pairwise registration to proceed
@@ -101,22 +100,14 @@ def addTransformixPath (str, delim) {
 def getOrder (f, delim, i) {
 		tuple( f.getBaseName().toString().split(delim).head(), i )
 }
-// helper function to extract image ID from filename
-def removePortions (a,b,c,d,e,f) {
-		tuple( a,b,e,f )
-}
-// helper function to flatten list and convert to tuple
-def mergeList ( l ) {
-	tuple( l.flatten() )
-}
 
 // block for parsing input images and parameter files
 // here we are not yet including the intermediate processing steps
 // create channel with images and parameter pairs (collate to pairs of 2)
 Channel.from( file("${params.in}/input/${params.fixedImage}"), file("${params.in}/input/${params.fixedPars}"),
- file("${params.in}/input/${params.movingImage}"), file("${params.in}/input/${params.movingPars}")).collate(2).set {s0in}
+ file("${params.in}/input/${params.movingImage}"), file("${params.in}/input/${params.movingPars}")).collate(2).set {rawin}
 // append image id
-s0in = s0in.map{ f, i -> getID(f,'\\.', i) }
+rawin = rawin.map{ f, i -> getID(f,'\\.', i) }
 // get the elastix parameters
 pars = Channel.from( tuple ( addElastixPath(params.elastixPars,'\\ ')[0] ) )
 // get the transformix parameters
@@ -153,27 +144,9 @@ a.concat(b).set {pre_prep}
 // run primary miaaim workflow
 workflow {
 		// prepare images with the hdi-prep module
-    hdiprep(s0in)
-		// join the output of hdiprep with the imageID and registration order block
-		s0in.join(hdiprep.out.prepout, remainder: true, by: 0).join(id_img).map{
-			a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {elx_pre}
-		// check for intermediates
-		if (params.idxStart >= 1 && params.idxStop >= 2) {
-			// if starting from elastix stage set intermediates as new input
-			elx_pre = pre_prep
-		}
-		// collect data for proper input to elastix registration
-		elx_pre.toSortedList( {
-			a, b -> a[3] <=> b[3] } ).flatten().collate( 4 ).collate( 2, 1, false).map{ f ->
-			mergeList( f ) }.flatten().concat(pars).collect().set {elxin}
-		// run elastix image registration
-		elastix(elxin)
-		// extract elastix output and convert to transformix format
-		elastix.out.regout.flatten().take(3).concat(
-			elastix.out.regout.flatten().first() ).toList().join(s0in).concat(transpars).collect().set {tfmxin}
-
-		tfmxin.view()
-		transformix(tfmxin)
+    hdiprep(rawin)
+		// perform image registrations
+		hdireg(rawin, hdiprep.out.prepout, id_img, pre_prep, pars, transpars)
 }
 
 // report parameters parameters used -- taken from mcmicro end report and adapted

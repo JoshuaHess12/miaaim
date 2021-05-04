@@ -1,5 +1,6 @@
 process elastix {
 
+	// add tag to elastix process for tracking
 	tag "hdireg-elastix"
 
 	// define output patterns and directory
@@ -28,9 +29,10 @@ process elastix {
 
 process transformix {
 
+	// add tag to transformix process for tracking
 	tag "hdireg-transformix"
 
-	publishDir "$params.pubDir/transformix", mode: 'copy', pattern: "*result.nii"
+	publishDir "$params.pubDir/transformix", mode: 'copy', pattern: "${m_id}"+"_result*"
 	// establish command and execution log outputs
 	publishDir "${params.parsDir}", mode: 'copy', pattern: '.command.sh',
 		saveAs: {fn -> "${tag}.sh"}
@@ -41,7 +43,7 @@ process transformix {
 	tuple( val (m_id), val (m_ord), path(res), val (m_id_Reapeat), path(m_og), path(yaml), val(pars) )
 
 	output:
-	tuple path("${m_og}"), path("${res}"), path ("*result.nii"), emit: transout
+	tuple path("${m_og}"), path("${res}"), path ("${m_id}"+"_result*"), emit: transout
 	tuple path('.command.sh'), path('.command.log')
 
 	when: params.idxStart <= 2 && params.idxStop >=2 && params.transformix
@@ -52,20 +54,9 @@ process transformix {
 }
 
 // helper function to extract image ID from filename
-def getID (f, delim, i) {
-		tuple( f.getBaseName().toString().split(delim).head(), f, i )
-}
-
-// helper function to extract image ID from filename
-def getOrder (f, delim, i) {
-		tuple( f.getBaseName().toString().split(delim).head(), i )
-}
-
-// helper function to extract image ID from filename
 def removePortions (a,b,c,d,e,f) {
 		tuple( a,b,e,f )
 }
-
 // helper function to flatten list and convert to tuple
 def mergeList ( l ) {
 	tuple( l.flatten() )
@@ -76,57 +67,38 @@ workflow hdireg {
   take:
 	rawin
 	prepout
-	elastixpars
-	transformixpars
+	id_img
+	pre_prep
+	pars
+	transpars
 
   main:
 
 	if( params.idxStart <= 2 && params.idxStop >=2 ) {
 
-		// initialize a list to store the fixed and moving image pairs in
-		prop_order = []
-		// create channel with the fixed and moving images
-		pair = ["${params.fixedImage}", "${params.movingImage}"]
-		//println pair
-		// append index
-		pair.eachWithIndex { item, index -> prop_order.add( [ file(item), index ] ) }
-		// create channel from the pair
-		prop_order = Channel.from( tuple (prop_order) )
+		// join the output of hdiprep with the imageID and registration order block
+		rawin.join(prepout, remainder: true, by: 0).join(id_img).map{
+			a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {elx_pre}
 
-		// append the image base name ID to existing tuples
-		id_img = prop_order.map{ f, i -> getOrder(f,'\\.', i) }
-		//id_img.view()
+		// check for intermediates preprocessed images
+		if (params.idxStart >= 1 && params.idxStop >= 2) {
+			// if starting from elastix stage set intermediates as new input
+			elx_pre = pre_prep
+		}
 
-		rawin.join(prepout, remainder: true, by: 0).join(id_img).map{ a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {test}
+		// collect data for proper input to elastix registration
+		elx_pre.toSortedList( {
+			a, b -> a[3] <=> b[3] } ).flatten().collate( 4 ).collate( 2, 1, false).map{ f ->
+			mergeList( f ) }.flatten().concat(pars).collect().set {elxin}
 
-		//test.toSortedList( { a, b -> a[2] <=> b[2] } ).flatten().collate( 4 ).collate( 2, 1, false).map{ f ->
-		//	mergeList( f ) }.set {tmp}
+		// run elastix image registration
+		elastix(elxin)
 
-		test.toSortedList( { a, b -> a[2] <=> b[2] } ).flatten().collate( 4 ).collate( 2, 1, false).mix(pars).map{ f ->
-			mergeList( f ) }.set {tmp}
-		tmp.view()
+		// extract elastix output and convert to transformix format
+		elastix.out.regout.flatten().take(3).concat(
+			elastix.out.regout.flatten().first() ).toList().join(rawin).concat(transpars).collect().set {tfmxin}
 
-
-		// register fixed and moving image pairs
-		//elastix(tmp)
-
-		//elastix.out.view()
-		// organize the results
-		//elastix.out.toSortedList( { a, b -> a[0] <=> b[0] } ).set { test }
-
-		//elastix.out.map{ f -> mergeList( f ) }.set{ bb }
-
-		// flatten the array and capture necessary components
-
-		//bb.flatten().take(2).mix( bb.flatten().last() ).toList().set { out }
-
-		// run transformix on the elastix output
-		//transformix(elastix.out)
-		//bb.view()
+		// transform full images using elastix transform parameters
+		transformix(tfmxin)
 	}
-	else {
-		tmp = "no registration performed"
-	}
-	emit:
-	tmp
 }
