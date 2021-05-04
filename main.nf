@@ -15,7 +15,7 @@ params.fixedImage = ''
 params.movingImage = ''
 params.fixedPars = ''
 params.movingPars = ''
-params.elastixPars = "--p aMI_affine1.txt MI_affine.txt"
+params.elastixPars = "--p aMI_affine.txt"
 params.transformix = false
 params.transformixPars = "--tps TransformParameters.0.txt TransformParameters.1.txt"
 
