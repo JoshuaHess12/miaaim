@@ -1,4 +1,12 @@
 title: MIAAIM
 description: Multi-modal image alignment and analysis by information manifolds
 
-theme: jekyll-theme-tactile
+remote_theme: CloudCannon/edition-jekyll-template
+
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-remote-theme
+
+
+repository: JoshuaHess12/miaaim
