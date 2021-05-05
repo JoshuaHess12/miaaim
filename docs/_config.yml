@@ -4,3 +4,5 @@ description: Multi-modal image alignment and analysis by information manifolds
 theme: jekyll-theme-slate
 
 repository: JoshuaHess12/miaaim
+
+exclude: ["node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "package.json", "package-lock.json",  "script/", "LICENSE.txt", "lib/", "bin/", "README.md", "Rakefile"]
