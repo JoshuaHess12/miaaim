@@ -3,6 +3,10 @@ description: Multi-modal image alignment and analysis by information manifolds
 
 theme: jekyll-theme-slate
 
+# google analytics
+ga_tracking: G-EBP7DZSHEP
+ga_tracking_anonymize_ip: true # GDPR compliant Google Analytics settings
+
 repository: JoshuaHess12/miaaim
 
 exclude: ["node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "package.json", "package-lock.json",  "script/", "LICENSE.txt", "lib/", "bin/", "README.md", "Rakefile"]
