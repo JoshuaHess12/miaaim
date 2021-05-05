@@ -2,10 +2,7 @@ title: MIAAIM
 description: Multi-modal image alignment and analysis by information manifolds
 
 theme: jekyll-theme-slate
-
-# google analytics
-ga_tracking: G-EBP7DZSHEP
-ga_tracking_anonymize_ip: true # GDPR compliant Google Analytics settings
+search_enabled: true
 
 repository: JoshuaHess12/miaaim
 
