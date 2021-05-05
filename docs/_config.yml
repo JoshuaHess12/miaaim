@@ -10,3 +10,5 @@ plugins:
 
 
 repository: JoshuaHess12/miaaim
+
+theme: jekyll-theme-slate
