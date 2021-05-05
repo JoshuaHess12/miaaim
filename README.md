@@ -25,8 +25,7 @@ sudo apt install openjdk-14-jre-headless
 curl -s https://get.nextflow.io | bash
 sudo apt-get -y install git
 ```
-9. Now install Docker for windows and allow it to connect with your WSL2.
-
+9. Now [install Docker](https://docs.docker.com/get-docker/) for windows and allow it to connect with your WSL2 (see [here](https://docs.docker.com/docker-for-windows/wsl/) for details).
 You should now be able to run nextflow and MIAAIM within your installed WSL!
 
 ## Quick Start
