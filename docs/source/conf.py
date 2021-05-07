@@ -50,7 +50,7 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
-html_logo = "logo.png"
+#html_logo = "logo.png"
 
 html_theme_options = {
 #    'analytics_id': 'UA-XXXXXXX-1',  #  Provided by Google in your dashboard
@@ -60,7 +60,7 @@ html_theme_options = {
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
     'vcs_pageview_mode': '',
-    'style_nav_header_background': 'white',
+    'style_nav_header_background': '5DADE2',
     # Toc options
     'collapse_navigation': False,
     'sticky_navigation': True,
@@ -83,3 +83,7 @@ html_sidebars = { '**': ['localtoc.html', 'globaltoc.html', 'searchbox.html'] }
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+html_css_files = [
+    'custom.css',
+]

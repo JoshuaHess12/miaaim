@@ -6,21 +6,44 @@
 
 MIAAIM: multi-modal image alignment and analysis by information manifolds
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-MIAAIM is a software to align multiple-omics tissue imaging data.
-The worflow includes high-dimensional image compression, registration, and
-transforming images to align in the same spatial domain. MIAAIM was developed at
-the `Vaccine and Immunotherapy Center at MHG <http://advancingcures.org>`_
-in the labs of `Dr. Patrick Reeves <http://advancingcures.org/reeves-lab/>`_
-and `Dr. Ruxandra Sîrbulescu <http://advancingcures.org/sirbulescu-lab/>`_.
-MIAAIM is written in `Nextflow <https://www.nextflow.io>`_ with containerized
-workflows to enable modular development and application across diverse computing
-architectures.
 
-MIAIM is under active development! All tutorials are subject to change
-in the future. To update your current version, pull the latest release
-from GitHub with :code:`nextflow pull JoshuaHess12/miaaim`.
+.. container:: twocol
 
-Visit regularly for the latest parameter references and usage instructions!
+   .. container:: leftside
+
+      .. figure:: Figure1-2.pdf
+         :width: 90%
+
+   .. container:: rightside
+
+      MIAAIM is a software to align and analyze multiple-omics tissue imaging data.
+      The workflow includes high-dimensional image compression, registration, and
+      tissue state modelling.
+
+      MIAAIM was developed by
+      `Joshua Hess <https://github.com/JoshuaHess12>`_ at
+      the `Vaccine and Immunotherapy Center at MHG <http://advancingcures.org>`_
+      in the labs of `Dr. Patrick Reeves <http://advancingcures.org/reeves-lab/>`_
+      and `Dr. Ruxandra Sîrbulescu <http://advancingcures.org/sirbulescu-lab/>`_.
+      It is written in `Nextflow <https://www.nextflow.io>`_ with containerized
+      workflows to enable modular development and application across diverse computing
+      architectures.
+
+      For an introduction to how MIAAIM is set up and implemented,
+      visit the :ref:`quick start <quick start to quick start>`
+      guide and implement some of the prototype use cases. For a complete
+      description of the project, check our paper on xxx.
+
+.. note::
+   MIAAIM is under active development! To update your current version, pull the
+   latest release from GitHub with :code:`nextflow pull JoshuaHess12/miaaim`.
+
+.. note::
+   If you pull a new version, please visit for the latest usage instructions for
+   new workflows! All new workflows and updated versions should be backwards compatible
+   with previous versions. If you are having trouble implementing a
+   pipeline that you are used to, feel free to :ref:`contact <Contact Information to contact>`
+   us so we can help.
 
 .. toctree::
    :maxdepth: 3
@@ -28,8 +51,10 @@ Visit regularly for the latest parameter references and usage instructions!
 
    installation
    quick_start
-   background
+   directory
    workflows
+   parameters
+   background
    nextflow
    elastix
    configuration
@@ -38,6 +63,13 @@ Visit regularly for the latest parameter references and usage instructions!
    tutorials
    python
    contributing
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contact
+
+   contact
+
 
 .. toctree::
    :maxdepth: 2
@@ -50,6 +82,13 @@ Visit regularly for the latest parameter references and usage instructions!
    :caption: License
 
    license
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Acknowledgements
+
+   acknowledgements
+
 
 Indices and tables
 ==================
