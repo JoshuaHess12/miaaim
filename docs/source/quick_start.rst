@@ -1,8 +1,9 @@
 .. _quick start to quick start:
+
 Quick Start
 ===========
 
-After you have followed installation of Nextflow and required materials, you can
+After you have :ref:`installed Nextflow <install to install>` you can
 download the latest version of MIAAIM directly from GitHub by typing::
 
   git clone https://github.com/JoshuaHess12/miaaim.git  # clone MIAAIM repository

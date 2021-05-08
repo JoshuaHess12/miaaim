@@ -1,3 +1,5 @@
+.. _install to install:
+
 Installation
 ============
 
@@ -12,8 +14,8 @@ and ensure that it is available to your system using the command :code:`docker i
 2. `Install Nextflow <https://www.nextflow.io>`_
 using :code:`curl -s https://get.nextflow.io | bash`
 
-3. You can Nextflow by calling it in the context of the directory that you installed
-it in with :code:`./nextflow run`.
+3. You can check that Nextflow is installed by calling it in the context of the
+directory that you installed it in with :code:`./nextflow run`.
 
 4. (Recommended) If you want to be able to call Nextflow
 directly from the command line without entering the path to it,

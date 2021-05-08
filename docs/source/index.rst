@@ -23,11 +23,11 @@ MIAAIM: multi-modal image alignment and analysis by information manifolds
       MIAAIM was developed by
       `Joshua Hess <https://github.com/JoshuaHess12>`_ at
       the `Vaccine and Immunotherapy Center at MHG <http://advancingcures.org>`_
-      in the labs of `Dr. Patrick Reeves <http://advancingcures.org/reeves-lab/>`_
-      and `Dr. Ruxandra Sîrbulescu <http://advancingcures.org/sirbulescu-lab/>`_.
+      in the labs of `Dr. Ruxandra Sîrbulescu <http://advancingcures.org/sirbulescu-lab/>`_
+      and `Dr. Patrick Reeves <http://advancingcures.org/reeves-lab/>`_.
       It is written in `Nextflow <https://www.nextflow.io>`_ with containerized
-      workflows to enable modular development and application across diverse computing
-      architectures.
+      workflows to enable modular development and reproducible
+      image data integration across diverse computing architectures.
 
       For an introduction to how MIAAIM is set up and implemented,
       visit the :ref:`quick start <quick start to quick start>`
@@ -40,10 +40,11 @@ MIAAIM: multi-modal image alignment and analysis by information manifolds
 
 .. note::
    If you pull a new version, please visit for the latest usage instructions for
-   new workflows! All new workflows and updated versions should be backwards compatible
+   new workflows! All updated versions should be backwards compatible
    with previous versions. If you are having trouble implementing a
    pipeline that you are used to, feel free to :ref:`contact <Contact Information to contact>`
    us so we can help.
+
 
 .. toctree::
    :maxdepth: 3
@@ -63,6 +64,12 @@ MIAAIM: multi-modal image alignment and analysis by information manifolds
    tutorials
    python
    contributing
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Releases
+
+   releases
 
 .. toctree::
    :maxdepth: 2

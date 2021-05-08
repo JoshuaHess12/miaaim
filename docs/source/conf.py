@@ -66,8 +66,9 @@ html_theme_options = {
     'sticky_navigation': True,
     'navigation_depth': 4,
     'includehidden': True,
-    'titles_only': False,
+    'titles_only': False
 }
+
 
 html_context = {
   'display_github': True,
@@ -76,6 +77,7 @@ html_context = {
   'github_version': '0.1.1',
 }
 
+#html_logo = "logo.tif"
 
 html_sidebars = { '**': ['localtoc.html', 'globaltoc.html', 'searchbox.html'] }
 

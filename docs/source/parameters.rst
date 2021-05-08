@@ -11,12 +11,19 @@ in the
 
 Nextflow
 --------
+Parameters passed are passed directly using the indicated flags below. See
+`here <https://www.nextflow.io/docs/latest/cli.html>`_
+for a full description of flags that can be passed to Nextflow. We have listed
+those below that are necessary for MIAAIM to run or are commonly used in our
+own usage.
 
-.. csv-table::
+.. csv-table:: Nextflow parameters
       :header: Flag, Description, Options
 
       :code:`-with-report`, generate provenance report, ""
+
       :code:`-resume`, resume workflow with cached results, ""
+
       :code:`--profile`, use indicated configuration profile, "| :code:`standard`
       | :code:`small`
       | :code:`medium`
@@ -25,11 +32,14 @@ Nextflow
       | :code:`hyper`
       | :code:`LSFsmall`
       | :code:`LSFbig_multi`"
+
       :code:`--start-at`, start workflow at indicated position, "| :code:`input`
       | :code:`hdiprep`
       | :code:`hdireg`"
+
       :code:`--start-at`, start workflow at indicated position, "| :code:`hdiprep`
       | :code:`hdireg`"
+
       :code:`--fixed-image`, fixed image for registration, "| :code:`*.ome.tiff`
       | :code:`*.ome.tif`
       | :code:`*.tiff`
@@ -37,6 +47,7 @@ Nextflow
       | :code:`*.h5`
       | :code:`*.nii`
       | :code:`*.imzml`"
+
       :code:`--moving-image`, moving image for registration, "| :code:`*.ome.tiff`
       | :code:`*.ome.tif`
       | :code:`*.tiff`
@@ -44,13 +55,18 @@ Nextflow
       | :code:`*.h5`
       | :code:`*.nii`
       | :code:`*.imzml`"
+
       :code:`--fixed-pars`, fixed image preprocessing yaml file, "| :code:`*.yaml`
       | see :ref:`HDIprep parameter reference <HDIprep to hdiprep parameters>`"
+
       :code:`--moving-pars`, moving image preprocessing yaml file, "| :code:`*.yaml`
       | see :ref:`HDIprep parameter reference <HDIprep to hdiprep parameters>`"
+
       :code:`--elastix-pars`, elastix registration parameters, "| :code:`*.txt`
       | see :ref:`HDIreg parameter reference <HDIreg to hdireg parameters>`"
+
       :code:`--transformix`, apply transformation matrix, ""
+
       :code:`--transformix-pars`, transformix parameters, "| :code:`*.txt`
       | see :ref:`HDIreg parameter reference <HDIreg to hdireg parameters>`"
 
@@ -80,8 +96,108 @@ Nextflow
 
 HDIprep
 -------
+Here we list the optional input parameters that can be supplied to the HDIprep
+workflow through the YAML parameter file. These parameters are passed to both
+the fixed and moving images with separate YAML files.
+
+.. csv-table:: --fixed-pars and --moving-pars
+      :header: YAML Step / Flag, Description, Options
+
+      Step : :code:`ImportOptions`, options for reading image data, ""
+      :code:`flatten:`, flatten pixels for dimension reduction, "| Options:
+      | :code:`True` if compressing images
+      | :code:`False` if histology processing"
+
+      :code:`subsample:`, subsample image for compression, "| Options:
+      | :code:`True` if subsampling pixels
+      | :code:`False` if no subsampling"
+
+      :code:`method:`, subsampling method , "| Options:
+      | :code:`'grid'` for uniform grid sampling
+      | :code:`'random'` for random coordinate sampling
+      | :code:`'pseudo_random'` for random sampling
+      | initalized by uniform grids"
+
+      :code:`grid_spacing:`, x and y grid spacing for sampling, "| Options:
+      | Example : :code:`(5,5)`"
+
+      :code:`n:`, :code:`random` / :code:`pseudo_random` sampling fraction , "| Options:
+      | Ex. : :code:`0.15`"
+
+      :code:`masks:`, TIFF mask to compress image portion, "| Options:
+      | Ex. : :code:`'moving-mask.tiff'`"
+
+      :code:`save_mem:`, reduce memory footprint, "| Options:
+      | :code:`True` for large image compression
+      | :code:`False` if interactive Python code"
+
+      Step : :code:`ProcessingSteps`, steps to process images, ""
+
+      :code:`- RunOptimalUMAP`, steady-state compression, "| Options:
+      | :code:`n_neighbors` nearest neighbors (Ex. :code:`15`)
+      | :code:`landmarks` spectral centroids (Ex. :code:`3000`)
+      | :code:`metric` UMAP metric (Ex. :code:`euclidean`)
+      | :code:`random_state` seed (Ex. :code:`1`)
+      | :code:`dim_range` range of dimensionalities (Ex. :code:`(1,10)`)
+      | :code:`**kwargs` kwargs passed to `UMAP <https://github.com/lmcinnes/umap>`_"
+
+      :code:`- RunUMAP`, UMAP compression , ":code:`**kwargs` passed to `UMAP <https://github.com/lmcinnes/umap>`_"
+
+      :code:`- RunOptimalParametricUMAP`, neural network steady state UMAP, "| Options:
+      | :code:`n_neighbors` nearest neighbors (Ex. :code:`15`)
+      | :code:`landmarks` spectral centroids (Ex. :code:`3000`)
+      | :code:`metric` UMAP metric (Ex. :code:`euclidean`)
+      | :code:`random_state` seed (Ex. :code:`1`)
+      | :code:`dim_range` range of dimensionalities (Ex. :code:`(1,10)`)
+      | :code:`**kwargs` kwargs passed to `UMAP <https://github.com/lmcinnes/umap>`_"
+
+      :code:`- RunParametricUMAP`, neural network UMAP compression, ":code:`**kwargs` passed to `UMAP <https://github.com/lmcinnes/umap>`_"
+
+      :code:`- SpatiallyMapUMAP`, reconstruct compressed image, ""
+
+      :code:`- ApplyManualMask`, apply manual mask, "| Options:
+      | mask accessed from :code:`ImportOptions`"
+
+      :code:`- MedianFilter`, median filter (remove salt and pepper noise), "| Options:
+      | :code:`filter_size` filter disk size (Ex. :code:`15`)
+      | :code:`parallel` use parallel processing (:code:`True` or :code:`False`)"
+
+      :code:`- Threshold`, create mask by thresholding , "| Options:
+      | :code:`type` threshold type (:code:`'manual' or 'otsu'`)
+      | :code:`thresh_value` manual threshold value (Ex. :code:`1.0`)
+      | :code:`correction` multiply threshold for stringent results (Ex. :code:`1.2`)"
+
+      :code:`- Open`, morphological closing on mask, "| Options:
+      | :code:`filter_size` filter disk size (Ex. :code:`15`)
+      | :code:`parallel` use parallel processing (:code:`True` or :code:`False`)"
+
+      :code:`- Close`, resume workflow with cached results, "| Options:
+      | :code:`filter_size` filter disk size (Ex. :code:`15`)
+      | :code:`parallel` use parallel processing (:code:`True` or :code:`False`)"
+
+      :code:`- Fill`, Fill holes in mask, ""
+
+      :code:`- ApplyMask`, apply mask to image for final processing step, ""
+
+      Step : :code:`ExportNifti1`, export in the NIfTI format, "| Options:
+      | :code:`type` image (Ex. :code:`(50,50)`)
+      | :code:`target_size` resize image before padding (Ex. :code:`(1000,1050)`)"
 
 .. _HDIreg to hdireg parameters:
 
 HDIreg
 ------
+
+.. csv-table:: ---elastix-pars
+      :header: Flag, Description, Options
+
+      :code:`--p`, generate provenance report, ""
+      :code:`--mp`, resume workflow with cached results, ""
+      :code:`--fp`, resume workflow with cached results, ""
+      :code:`--fMask`, resume workflow with cached results, ""
+
+.. csv-table:: ---transformix-pars
+      :header: Flag, Description, Options
+
+      :code:`--tps`, generate provenance report, ""
+      :code:`--target_size`, resume workflow with cached results, ""
