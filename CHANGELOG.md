@@ -1,1 +1,0 @@
-# MIAAIM Version Logging

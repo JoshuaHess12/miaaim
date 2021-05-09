@@ -50,10 +50,8 @@ for a parameter file for image compression:
           random_state: 1221                       # set seed for reproducibility
           dim_range: (1,10)                        # steady state compression dimension range
           export_diagnostics: True                 # export steady state compression diagnostics
-          output_dir: "path/output-directory"      # output directory
       - SpatiallyMapUMAP                           # spatial reconstruction of UMAP embedding
       - ExportNifti1:                              # export processed image as NIfTI
-          output_dir: "path/output-directory"      # output directory
 
 :code:`ProcessingSteps` in HDIprep are indicated
 with the :code:`-` flag. These steps will be run sequentially. Parameters within each

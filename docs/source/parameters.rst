@@ -180,7 +180,7 @@ the fixed and moving images with separate YAML files.
       :code:`- ApplyMask`, apply mask to image for final processing step, ""
 
       Step : :code:`ExportNifti1`, export in the NIfTI format, "| Options:
-      | :code:`type` image (Ex. :code:`(50,50)`)
+      | :code:`padding` pad to add to images image (Ex. :code:`(50,50)`)
       | :code:`target_size` resize image before padding (Ex. :code:`(1000,1050)`)"
 
 .. _HDIreg to hdireg parameters:
@@ -191,13 +191,36 @@ HDIreg
 .. csv-table:: ---elastix-pars
       :header: Flag, Description, Options
 
-      :code:`--p`, generate provenance report, ""
-      :code:`--mp`, resume workflow with cached results, ""
-      :code:`--fp`, resume workflow with cached results, ""
-      :code:`--fMask`, resume workflow with cached results, ""
+      :code:`--p`, parameter file(s) for registration, ":code:`*.txt`"
+      :code:`--mp`, moving image landmark points, ":code:`*.txt`"
+      :code:`--fp`, fixed image landmark points, ":code:`*.txt`"
+      :code:`--fMask`, fixed image mask, ":code:`*.tif`"
+
+.. tip::
+      You can chain together multiple elastix parameter files by
+      supplying multiple inputs. For example, an affine registration followed
+      by a nonlinear one can be implemented as :code:`--p affine.txt nonlinear.txt` where
+      :code:`affine.txt` and :code:`nonlinear.txt` are your parameter files.
+
 
 .. csv-table:: ---transformix-pars
       :header: Flag, Description, Options
 
-      :code:`--tps`, generate provenance report, ""
-      :code:`--target_size`, resume workflow with cached results, ""
+      :code:`--tps`, transformation parameter file(s), ":code:`*.txt`"
+      :code:`--target_size`, resize image before padding, "(Ex. :code:`(1000,1050)`)"
+      :code:`--pad`, pad to add to images image, "(Ex. :code:`(50,50)`)"
+      :code:`--trim`, number of pixels to trim off edges, "(Ex. :code:`50`)"
+      :code:`--out_ext`, aligned image final file format, "| :code:`.ome.tiff`
+      | :code:`.ome.tif`
+      | :code:`.tiff`
+      | :code:`.hdf5`
+      | :code:`.h5`
+      | :code:`.nii`"
+
+.. tip::
+      If you use multiple registration parameter files in elastix, then you
+      should add both sets of transformation parameters to the transformix command
+      to receive final results. From the above example, two transformation parameter
+      files would be exported -- :code:`TransformationParameters.0.txt` for the
+      affine registration and :code:`TransformationParameters.1.txt` for nonlinear.
+      Your transformix call should be :code:`--tps TransformationParameters.0.txt TransformationParameters.1.txt`

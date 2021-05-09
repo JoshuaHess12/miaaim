@@ -11,10 +11,10 @@ miaaim_steps = ["input",			// raw input
 // set default input parameters for workflows
 params.startAt = 'input'
 params.stopAt = 'hdireg'
-params.fixedImage = ''
-params.movingImage = ''
-params.fixedPars = ''
-params.movingPars = ''
+params.fixedImage = 'fixed.ome.tif'
+params.movingImage = 'moving.ome.tif'
+params.fixedPars = 'fixed.yaml'
+params.movingPars = 'moving.yaml'
 params.elastixPars = "--p aMI_affine.txt"
 params.transformix = false
 params.transformixPars = "--tps TransformParameters.0.txt TransformParameters.1.txt"
