@@ -168,16 +168,18 @@ the fixed and moving images with separate YAML files.
       | :code:`correction` multiply threshold for stringent results (Ex. :code:`1.2`)"
 
       :code:`- Open`, morphological closing on mask, "| Options:
-      | :code:`filter_size` filter disk size (Ex. :code:`15`)
+      | :code:`disk_size` filter disk size (Ex. :code:`15`)
       | :code:`parallel` use parallel processing (:code:`True` or :code:`False`)"
 
       :code:`- Close`, resume workflow with cached results, "| Options:
-      | :code:`filter_size` filter disk size (Ex. :code:`15`)
+      | :code:`disk_size` filter disk size (Ex. :code:`15`)
       | :code:`parallel` use parallel processing (:code:`True` or :code:`False`)"
 
       :code:`- Fill`, Fill holes in mask, ""
 
       :code:`- ApplyMask`, apply mask to image for final processing step, ""
+
+      :code:`- NonzeroBox`, extract image bounding box (for controlled padding), ""
 
       Step : :code:`ExportNifti1`, export in the NIfTI format, "| Options:
       | :code:`padding` pad to add to images image (Ex. :code:`(50,50)`)

@@ -56,6 +56,7 @@ components for Nextflow and pulling the MIAAIM repository from GitHub::
    sudo apt install openjdk-14-jre-headless  # install latest version of Java
    curl -s https://get.nextflow.io | bash    # install latest version of Nextflow
    sudo apt-get -y install git               # install git so you can clone MIAAIM from GitHub
+   sudo apt-get install -y libarchive-tools  # install bsdtar command for unzipping prototypes
 
 9. Now `install Docker <https://docs.docker.com/get-docker/>`_
 for windows and allow it to connect with your WSL2 (see

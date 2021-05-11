@@ -11,13 +11,13 @@ miaaim_steps = ["input",			// raw input
 // set default input parameters for workflows
 params.startAt = 'input'
 params.stopAt = 'hdireg'
-params.fixedImage = 'fixed.ome.tif'
-params.movingImage = 'moving.ome.tif'
+params.fixedImage = 'fixed.tif'
+params.movingImage = 'moving.tif'
 params.fixedPars = 'fixed.yaml'
 params.movingPars = 'moving.yaml'
-params.elastixPars = "--p aMI_affine.txt"
+params.elastixPars = "--p MI_affine.txt"
 params.transformix = false
-params.transformixPars = "--tps TransformParameters.0.txt TransformParameters.1.txt"
+params.transformixPars = "--tps TransformParameters.0.txt"
 
 // identify starting and stopping indices
 params.idxStart = miaaim_steps.indexOf( params.startAt )
@@ -58,10 +58,16 @@ def movingPrecomp (f, delim) {
 def fixedPrecomp (f, delim) {
 		tuple( f.getSimpleName().toString().split(delim).head(), file("${params.in}/input/${params.fixedImage}"), f, 1 )
 }
+
 // helper function to extract image ID from filename
 def getID (f, delim, i) {
 		tuple( f.getBaseName().toString().split(delim).head(), f, i )
 }
+// helper function to get associated ibd file for imzml file parsing
+def pairFiles (id, f, i) {
+	tuple( id, f, i )
+}
+
 // define function for parsing elastix parameter files since they are not converted to processes directly
 def addElastixPath (str, delim) {
 	// create channel for elastix parser by initiating a list
@@ -108,6 +114,7 @@ Channel.from( file("${params.in}/input/${params.fixedImage}"), file("${params.in
  file("${params.in}/input/${params.movingImage}"), file("${params.in}/input/${params.movingPars}")).collate(2).set {rawin}
 // append image id
 rawin = rawin.map{ f, i -> getID(f,'\\.', i) }
+// check for paired files, such as imzml and ibd
 // get the elastix parameters
 pars = Channel.from( tuple ( addElastixPath(params.elastixPars,'\\ ')[0] ) )
 // get the transformix parameters
@@ -139,6 +146,8 @@ pre_fixed = findFiles(params.idxStart == 2 && params.idxStop >= 2,
 pre_fixed.map{ f -> fixedPrecomp(f,'\\_processed') }.set{b}
 // concatenate the preprocessed files to match the tuple structure of hdiprep outputting
 a.concat(b).set {pre_prep}
+
+pre_prep.view()
 
 // code block for primary MIAAIM workflow
 // run primary miaaim workflow
