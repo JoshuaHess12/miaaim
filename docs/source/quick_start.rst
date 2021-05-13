@@ -19,10 +19,16 @@ prototype-001
 ^^^^^^^^^^^^^
 
 1. prototype-001 is a coupled MALDI-TOF mass spectrometry imaging (MSI) and H&E data
-set from a diabetic foot ulcer. Run this example by typing::
+set from a prostate tumor tissue bioppsy. Run through this example workflow by typing::
 
-  nextflow run JoshuaHess12/miaaim run prototype-001 --fixed-image im1.tiff --moving-image
-  im2.tif
+  nextflow run JoshuaHess12/miaaim/prototype.nf --proto prototype-001 --out .
+
+To download the prototype folder and unzip its contents to your current working
+directory. You should be able to inspect the contents of the :code:`input` folder
+to confirm that the download was successful. Initiate the registration workflow
+by typing::
+
+  nextflow run JoshuaHess12/miaaim --in prototype-001 --out . --transformix
 
 Results can be visualized using ImageJ/FIJI:
 
@@ -30,10 +36,19 @@ prototype-002
 ^^^^^^^^^^^^^
 
 2. prototype-002 is a coupled MALDI-TOF mass spectrometry imaging (MSI) and IMC data
-set from a region of interest (ROI) within prototype-001. Run this example by typing::
+set from a region of interest (ROI) within a diabetic foot ulcer tissue biopsy.
+Run through this example workflow by typing::
 
-  nextflow run JoshuaHess12/miaaim run prototype-002 --fixed-image im1.tiff --moving-image
-  im2.tif
+  nextflow run JoshuaHess12/miaaim/prototype.nf --proto prototype-002 --out .
+
+To download the prototype folder and unzip its contents to your current working
+directory. You should be able to inspect the contents of the :code:`input` folder
+to confirm that the download was successful. Initiate the registration workflow
+by typing::
+
+  nextflow run JoshuaHess12/miaaim --in prototype-001 --out . --transformix
+
+Results can be visualized using ImageJ/FIJI:
 
 prototype-003
 ^^^^^^^^^^^^^

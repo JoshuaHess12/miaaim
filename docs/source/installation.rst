@@ -64,3 +64,11 @@ for windows and allow it to connect with your WSL2 (see
 
 You should now be able to run nextflow and MIAAIM within your installed WSL as you
 would with a Linux system (above) starting at step 3!
+
+.. tip::
+   You can transfer data to and from your WSL by using the :code:`/mnt` folder.
+   For example, once inside your WSL, the following command will transfer the
+   :code:`data-example` folder from the D drive on your windows machine to your home folder
+   within the WSL::
+
+      cp -r /mnt/d/data-example ~/           # copy data to WSL from D drive

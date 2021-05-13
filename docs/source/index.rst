@@ -38,9 +38,10 @@ MIAAIM: multi-modal image alignment and analysis by information manifolds
    MIAAIM is under active development! To update your current version, pull the
    latest release from GitHub with :code:`nextflow pull JoshuaHess12/miaaim`.
    If you pull a new version, please visit for the latest usage instructions for
-   new workflows! All updated versions should be backwards compatible
+   new workflows! We will try to make all updated versions backwards compatible
    with previous versions. If you are having trouble implementing a
-   pipeline that you are used to, feel free to :ref:`contact <Contact Information to contact>`
+   pipeline that you are used to after updating your MIAAIM version,
+   feel free to :ref:`contact <Contact Information to contact>`
    us so we can help.
 
 .. toctree::
