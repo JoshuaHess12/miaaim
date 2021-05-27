@@ -63,10 +63,7 @@ def fixedPrecomp (f, delim) {
 def getID (f, delim, i) {
 		tuple( f.getBaseName().toString().split(delim).head(), f, i )
 }
-// helper function to get associated ibd file for imzml file parsing
-def pairFiles (id, f, i) {
-	tuple( id, f, i )
-}
+
 
 // define function for parsing elastix parameter files since they are not converted to processes directly
 def addElastixPath (str, delim) {
