@@ -21,7 +21,7 @@ process hdiprep {
 	when: params.idxStart <= 1 && params.idxStop >= 1
 
   """
-  python "/app/command_hdi_prep.py" --im "${im}" "--pars "${pars}" --out_dir .
+  python "/app/command_hdi_prep.py" --im "${im}" --pars "${pars}" --out_dir .
   """
 
 }
