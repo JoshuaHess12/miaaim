@@ -68,6 +68,10 @@ and exporting an image with the indicated parameters as key-value pairs.
 
 High-Parameter Image Processing
 -------------------------------
+
+.. figure:: Figure2-5-panelA.pdf
+   :width: 100%
+
 MIAAIM processes high-parameter images using a newly developed image
 compression method. This method is based off of UMAP, and it adds functionality
 to subsample images for rapid compression and to objectively choose embedding
@@ -83,8 +87,14 @@ options
 Image Registration (HDIreg)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+.. figure:: Figure2-5-panelB.pdf
+   :width: 100%
+
 Tissue State Modelling (PatchMAP)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. figure:: Figure-4-1.pdf
+   :width: 100%
 
 Cross-System/Tissue Information Transfer (i-PatchMAP)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
