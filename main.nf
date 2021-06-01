@@ -121,8 +121,15 @@ rawin = rawin.map{ f, i -> getID(f,'\\.', i) }
 // check for paired files, such as imzml and ibd
 // get the elastix parameters
 pars = Channel.from( tuple ( addElastixPath(params.elastixPars,'\\ ')[0] ) )
-// get the transformix parameters
-transpars = Channel.from( tuple( addTransformixPath(params.transformixPars,'\\ ') ) )
+// get the transformix parameters if transformix is set to true
+if (transformix) {
+	// parse the file
+	transpars = Channel.from( tuple( addTransformixPath(params.transformixPars,'\\ ') ) )
+}
+else {
+	// set the transpars to empty channel
+	transpars = Channel.empty()
+}
 
 // initialize a list to store the fixed and moving image pairs in
 prop_order = []
