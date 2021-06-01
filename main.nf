@@ -92,8 +92,15 @@ def addTransformixPath (str, delim) {
 	// get only the parameter inputs
 	ps = splt[1..-1]
 	for( def p : ps ) {
+		// check if the object is a file path or string
+		if (file(paths[2] + "/elastix/" + p).exists() ) {
 			p = file(paths[2] + "/elastix/" + p)
 			out = out + " " + p
+		}
+		else {
+			// object is string
+			out = out + " " + p
+		}
 
 	}
 	// return the output string
