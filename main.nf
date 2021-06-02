@@ -83,29 +83,6 @@ def addElastixPath (str, delim) {
 	//return the output string
 	[out,chanpar]
 }
-// define function for parsing elastix parameter files since they are not converted to processes directly
-def addTransformixPath (str, delim) {
-	// split string
-	splt = str.split(delim)
-	// create list to populate
-	out = splt[0]
-	// get only the parameter inputs
-	ps = splt[1..-1]
-	for( def p : ps ) {
-		// check if the object is a file path or string
-		if (file(paths[2] + "/elastix/" + p).exists() ) {
-			p = file(paths[2] + "/elastix/" + p)
-			out = out + " " + p
-		}
-		else {
-			// object is string
-			out = out + " " + p
-		}
-
-	}
-	// return the output string
-	out
-}
 // helper function to extract image ID from filename
 def getOrder (f, delim, i) {
 		tuple( f.getBaseName().toString().split(delim).head(), i )
@@ -121,15 +98,6 @@ rawin = rawin.map{ f, i -> getID(f,'\\.', i) }
 // check for paired files, such as imzml and ibd
 // get the elastix parameters
 pars = Channel.from( tuple ( addElastixPath(params.elastixPars,'\\ ')[0] ) )
-// get the transformix parameters if transformix is set to true
-if (transformix) {
-	// parse the file
-	transpars = Channel.from( tuple( addTransformixPath(params.transformixPars,'\\ ') ) )
-}
-else {
-	// set the transpars to empty channel
-	transpars = Channel.empty()
-}
 
 // initialize a list to store the fixed and moving image pairs in
 prop_order = []
@@ -166,7 +134,7 @@ workflow {
 		// prepare images with the hdi-prep module
     hdiprep(rawin)
 		// perform image registrations
-		hdireg(rawin, hdiprep.out.prepout, id_img, pre_prep, pars, transpars)
+		hdireg(rawin, hdiprep.out.prepout, id_img, pre_prep, pars)
 }
 
 // report parameters parameters used -- taken from mcmicro end report and adapted

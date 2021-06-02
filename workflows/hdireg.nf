@@ -61,6 +61,28 @@ def removePortions (a,b,c,d,e,f) {
 def mergeList ( l ) {
 	tuple( l.flatten() )
 }
+// define function for parsing elastix parameter files since they are not converted to processes directly
+def addTransformixPath (str, delim) {
+	// split string
+	splt = str.split(delim)
+	// create list to populate
+	out = splt[0]
+	// get only the parameter inputs
+	ps = splt[1..-1]
+	for( def p : ps ) {
+		// check if the object is a file path or string
+		if (file(params.pubDir + "/elastix/" + p).exists() ) {
+			p = file(params.pubDir + "/elastix/" + p)
+			out = out + " " + p
+		}
+		else {
+			// object is string
+			out = out + " " + p
+		}
+	}
+	// return the output string
+	out
+}
 
 // define primary hdireg workflow
 workflow hdireg {
@@ -70,7 +92,6 @@ workflow hdireg {
 	id_img
 	pre_prep
 	pars
-	transpars
 
   main:
 
@@ -93,7 +114,16 @@ workflow hdireg {
 
 		// run elastix image registration
 		elastix(elxin)
-
+		// get the transformix parameters if transformix is set to true
+		if (params.transformix) {
+			// parse the file
+			transpars = Channel.from( tuple( addTransformixPath(params.transformixPars,'\\ ') ) )
+		}
+		else {
+			// set the transpars to empty channel
+			transpars = Channel.empty()
+		}
+		
 		// extract elastix output and convert to transformix format
 		elastix.out.regout.flatten().take(3).concat(
 			elastix.out.regout.flatten().first() ).toList().join(rawin).concat(transpars).collect().set {tfmxin}
