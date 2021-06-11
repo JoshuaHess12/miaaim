@@ -97,15 +97,16 @@ workflow hdireg {
 
 	if( params.idxStart <= 2 && params.idxStop >=2 ) {
 
-		// join the output of hdiprep with the imageID and registration order block
-		rawin.join(prepout, remainder: true, by: 0).join(id_img).map{
-			a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {elx_pre}
-		elx_pre.view()
 
 		// check for intermediates preprocessed images
 		if (params.idxStart >= 1 && params.idxStop >= 2) {
 			// if starting from elastix stage set intermediates as new input
 			elx_pre = pre_prep
+		}
+		else {
+			// join the output of hdiprep with the imageID and registration order block
+			rawin.join(prepout, remainder: true, by: 0).join(id_img).map{
+				a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {elx_pre}
 		}
 
 		// collect data for proper input to elastix registration

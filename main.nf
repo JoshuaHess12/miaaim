@@ -129,7 +129,7 @@ pre_fixed = findFiles(params.idxStart == 2 && params.idxStop >= 2,
 pre_fixed.map{ f -> fixedPrecomp(f,'\\_processed') }.set{b}
 // concatenate the preprocessed files to match the tuple structure of hdiprep outputting
 a.concat(b).set {pre_prep}
-pre_prep.view()
+//pre_prep.view()
 
 // code block for primary MIAAIM workflow
 // run primary miaaim workflow
