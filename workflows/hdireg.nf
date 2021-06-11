@@ -100,6 +100,7 @@ workflow hdireg {
 		// join the output of hdiprep with the imageID and registration order block
 		rawin.join(prepout, remainder: true, by: 0).join(id_img).map{
 			a,b,c,d,e,f -> removePortions(a,b,c,d,e,f) }.set {elx_pre}
+		elx_pre.view()
 
 		// check for intermediates preprocessed images
 		if (params.idxStart >= 1 && params.idxStop >= 2) {
@@ -123,7 +124,7 @@ workflow hdireg {
 			// set the transpars to empty channel
 			transpars = Channel.empty()
 		}
-		
+
 		// extract elastix output and convert to transformix format
 		elastix.out.regout.flatten().take(3).concat(
 			elastix.out.regout.flatten().first() ).toList().join(rawin).concat(transpars).collect().set {tfmxin}
