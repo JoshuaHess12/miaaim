@@ -6,9 +6,9 @@ process hdiprep {
 	publishDir "$params.pubDir", mode: 'copy',  pattern: "*processed.nii"
 	// establish command and execution log outputs
 	publishDir "${params.parsDir}", mode: 'copy', pattern: '.command.sh',
-		saveAs: {fn -> "${tag}.sh"}
+		saveAs: {fn -> "${tag}"+"-${id}"+".sh"}
 	publishDir "${params.parsDir}", mode: 'copy', pattern: '.command.log',
-		saveAs: {fn -> "${tag}.log"}
+		saveAs: {fn -> "${tag}"+"-${id}"+".log"}
 
   input:
 	tuple val (id), file (im), file (pars)

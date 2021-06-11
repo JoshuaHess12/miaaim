@@ -36,6 +36,10 @@ if( params.idxStop >= 2 && params.elastixPars == '' )
 if( params.idxStop >= 2 && params.transformix && params.transformixPars == '' )
 		 error "please provide parameter file names for transforming with --transformix-pars"
 
+// set current error if transformix is being called without first running the
+// registration pipeline
+
+
 // define subdirectories for workflow processes
 paths = miaaim_steps.collect{ "${params.in}/$it" }
 // create parameter logging and command output directory
@@ -125,7 +129,6 @@ pre_fixed = findFiles(params.idxStart == 2 && params.idxStop >= 2,
 pre_fixed.map{ f -> fixedPrecomp(f,'\\_processed') }.set{b}
 // concatenate the preprocessed files to match the tuple structure of hdiprep outputting
 a.concat(b).set {pre_prep}
-
 pre_prep.view()
 
 // code block for primary MIAAIM workflow
@@ -143,8 +146,6 @@ workflow.onComplete {
 		file("${params.parsDir}").mkdirs()
     // store parameters used
     file("${params.parsDir}/miaaim-pars.yml").withWriter{ out ->
-	out.println "githubTag: $workflow.revision";
-	out.println "githubCommit: $workflow.commitId";
 	params.each{ key, val ->
 	    if( key.indexOf('-') == -1 )
 	    out.println "$key: $val"
