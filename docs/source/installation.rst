@@ -19,10 +19,9 @@ directory that you installed it in with :code:`./nextflow run`.
 
 4. (Recommended) If you want to be able to call Nextflow
 directly from the command line without entering the path to it,
-add it to your :code:`$PATH` with the following::
+enter the follwing command::
 
-   mv nextflow ~/bin                                  # add Nextflow to bin folder
-   echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc  # add your bin to your path
+   chmod +x nextflow    # be able to call nextflow
 
 Windows
 ^^^^^^^^^^^^

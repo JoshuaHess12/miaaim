@@ -26,7 +26,16 @@ Here is the current directory structure and optional outputs for each:
     │   └── transformix                     # FINAL RESULTS FOLDER
     │       ├── moving_result.ext               # exported results
     │       └── fixed.ext                       # fixed image (optional)
-    └── patchmap                       # patchmap workflow
+    └── docs                           # provenance module
+        ├── miaaim-pars.yaml                # workflow parameters
+        ├── hdiprep-fixed.log               # hdiprep fixed image log
+        ├── hdiprep-fixed.sh                # hdiprep fixed image command
+        ├── hdiprep-moving.log              # hdiprep moving image log
+        ├── hdiprep-moving.sh               # hdiprep moving image command
+        ├── hdireg-elastix.log              # hdireg elastix log
+        ├── hdireg-elastix.sh               # hdireg elastix command
+        ├── hdireg-transformix.log          # hdireg transformix log
+        └── hdireg-transformix.sh           # hdireg transformix command
 
 MIAAIM is developed to integrate assembled images in the level 2 format. Your
 base folder, :code:`imageID` should contain your assembled image sample name.
@@ -71,3 +80,7 @@ patchmap
 .. note::
    PatchMAP's implementation in the MIAAIM Nextflow pipeline will be featured in
    version 0.2!
+
+docs
+-------
+Provenance module for the MIAAIM workflow.
