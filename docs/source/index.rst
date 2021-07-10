@@ -53,28 +53,37 @@ MIAAIM: multi-modal image alignment and analysis by information manifolds
    directory
    workflows
    parameters
+   tutorials
    background
-   nextflow
    elastix
    configuration
    executors
    provenance
-   tutorials
-   python
    contributing
 
 .. toctree::
    :maxdepth: 2
-   :caption: Releases
+   :caption: MIAAIM in Python
 
-   releases
+   python
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Roadmap
+
+   roadmap
+
+.. toctree::
+   :maxdepth: 2
+   :caption: FAQs
+
+   faqs
 
 .. toctree::
    :maxdepth: 2
    :caption: Contact
 
    contact
-
 
 .. toctree::
    :maxdepth: 2

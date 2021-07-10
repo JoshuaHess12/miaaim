@@ -8,7 +8,8 @@ MIAAIM contains 4 major workflows: (i.) image preparation (ii.) image registrati
 For a comprehensive table of input options for these workflows, see the
 :ref:`Parameter Reference <Parameter Reference to Parameter Reference>` section.
 
-Up-to-date input options and versions for each workflow are available on GitHub:
+Up-to-date input options and docker containerizd versions of each workflow
+are available on GitHub:
 
 .. _Workflow GitHub Repositories to Workflow GitHub Repositories:
 .. list-table:: Workflow GitHub Repositories
@@ -35,29 +36,24 @@ histological stains.
 HDIprep can chain together multiple operations to process images. Passing arguments
 are streamlined through the use of YAML parameter files.
 
-YAML Parameter File
--------------------
+YAML Parameter File Input
+-------------------------
 HDIprep parses YAML parameter files as Python would. Here are example contents
 for a parameter file for image compression:
 
 ::
 
     ProcessingSteps:                               # indicates processing steps
-      - RunOptimalUMAP:                            # steady state UMAP compression
-          n_neighbors: 15                          # neighbors to use for UMAP
-          landmarks: 3000                          # spectral landmarks
-          metric: 'euclidean'                      # metric
-          random_state: 1221                       # set seed for reproducibility
-          dim_range: (1,10)                        # steady state compression dimension range
-          export_diagnostics: True                 # export steady state compression diagnostics
+      - RunOptimalUMAP                             # steady state UMAP compression
       - SpatiallyMapUMAP                           # spatial reconstruction of UMAP embedding
-      - ExportNifti1:                              # export processed image as NIfTI
+      - ExportNifti1                               # export processed image as NIfTI
 
 :code:`ProcessingSteps` in HDIprep are indicated
 with the :code:`-` flag. These steps will be run sequentially. Parameters within each
 workflow step are indicated as key-value pairs with a colon (:code:`:`) For example,
-the above snippet will run steady state UMAP compression, image reconstruction,
-and exporting an image with the indicated parameters as key-value pairs.
+the above snippet will run steady state UMAP compression using the :code:`RunOptimalUMAP`
+function, image reconstruction using the :code:`SpatiallyMapUMAP` function, and will
+export an image with the :code:`ExportNifti1` function.
 
 .. note::
     MIAAIM's utilizes the NIfTI format for HDIreg. The HDIprep workflow therefore
@@ -74,8 +70,10 @@ High-Parameter Image Processing
 
 MIAAIM processes high-parameter images using a newly developed image
 compression method. This method is based off of UMAP, and it adds functionality
-to subsample images for rapid compression and to objectively choose embedding
-dimensionalities for them.
+to subsample images for rapid compression. It additionally can embed data in
+a dimensionality that optimally preserves data information while minimizing the
+necessary dimensionality of the embedding space (number of channels in the
+compressed image).
 
 Histological Image Processing
 -----------------------------
@@ -93,7 +91,7 @@ Image Registration (HDIreg)
 Tissue State Modelling (PatchMAP)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: Figure-4-1.pdf
+.. figure:: Figure-4-2.pdf
    :width: 100%
 
 Cross-System/Tissue Information Transfer (i-PatchMAP)
