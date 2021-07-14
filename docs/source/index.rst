@@ -66,6 +66,7 @@ MIAAIM: multi-modal image alignment and analysis by information manifolds
    :caption: MIAAIM in Python
 
    python
+   api
 
 .. toctree::
    :maxdepth: 2

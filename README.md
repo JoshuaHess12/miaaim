@@ -1,6 +1,10 @@
 # MIAAIM: multi-modal image alignment and analysis by information manifolds
 MIAAIM is a software to align multiple-omics tissue imaging data. The worflow includes high-dimensional image compression, registration, and transforming images to align in the same spatial domain. MIAAIM was developed at the [Vaccine and Immunotherapy Center at MGH](http://advancingcures.org) in the labs of [Dr. Patrick Reeves](http://advancingcures.org/reeves-lab/) and [Dr. Ruxandra Sîrbulescu](http://advancingcures.org/sirbulescu-lab/). MIAAIM is written in [Nextflow](https://www.nextflow.io) with containerized workflows to enable modular development and application across diverse computing architectures.
 
+## MIAAIM in Python
+If you are not comfortable running Nextflow, or if your pipeline needs to be tailored for a specific application,
+please feel free to navigate to [MIAAIM in Python](https://github.com/JoshuaHess12/miaaim-python).
+
 ## Installation 
 MIAAIM uses nextflow, which requires [Java 8 or later](http://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
@@ -8,7 +12,15 @@ MIAAIM uses nextflow, which requires [Java 8 or later](http://www.oracle.com/tec
 To get started with MIAAIM:
 1. [Install Docker](https://docs.docker.com/get-docker/). You can ensure that Docker is available to your system using the command `docker images`
 2. [Install Nextflow](https://www.nextflow.io) using `curl -s https://get.nextflow.io | bash`
-
+3. You can check that Nextflow is installed by calling it in the context of the
+directory that you installed it in with `./nextflow run`.
+4. (Recommended) If you want to be able to call Nextflow
+directly from the command line without entering the path to it,
+enter the follwing command:
+```bash
+ chmod +x nextflow    # be able to call nextflow
+ ```
+ 
 ### Windows
 To run Nextflow in Windows, you will need to [install WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) prior to installing Nextflow. To do this, follow these steps:
 1. Open Windows Powershell as administrator.
@@ -23,12 +35,11 @@ To run Nextflow in Windows, you will need to [install WSL](https://docs.microsof
 sudo apt update
 sudo apt install openjdk-14-jre-headless
 curl -s https://get.nextflow.io | bash
+chmod +x nextflow
 sudo apt-get -y install git
 ```
 9. Now [install Docker](https://docs.docker.com/get-docker/) for windows and allow it to connect with your WSL2 (see [here](https://docs.docker.com/docker-for-windows/wsl/) for details).
 You should now be able to run nextflow and MIAAIM within your installed WSL!
-
-## Quick Start
 
 ## Funding
 This work is supported by philanthropic funding at the Vaccine and Immunotherapy Center. Josh Hess is supported by an [NSF Graduate Research Fellowship](https://nsfgrfp.org)

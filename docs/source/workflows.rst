@@ -159,7 +159,7 @@ image preprocessing. These are typically applied as sequential image processing
 options
 
 HDIprep Implementation Guide
---------------------
+----------------------------
 .. list-table:: HDIprep Implementation Guide
    :widths: 25 25
    :header-rows: 1
