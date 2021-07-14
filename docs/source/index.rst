@@ -17,8 +17,9 @@ MIAAIM: multi-modal image alignment and analysis by information manifolds
    .. container:: rightside
 
       MIAAIM is a software to align and analyze multiple-omics tissue imaging data.
-      The workflow includes high-dimensional image compression, registration, and
-      tissue state modelling.
+      The workflow includes high-dimensional image compression and preprocessing,
+      image registration,
+      tissue state modelling, and domain transfer.
 
       MIAAIM was developed by
       `Joshua Hess <https://github.com/JoshuaHess12>`_ at
@@ -26,13 +27,12 @@ MIAAIM: multi-modal image alignment and analysis by information manifolds
       in the labs of `Dr. Ruxandra Sîrbulescu <http://advancingcures.org/sirbulescu-lab/>`_
       and `Dr. Patrick Reeves <http://advancingcures.org/reeves-lab/>`_.
       It is written in `Nextflow <https://www.nextflow.io>`_ with containerized
-      workflows to enable modular development and reproducible
-      image data integration across diverse computing architectures.
+      workflows to enable reproducible
+      image data integration across computing architectures.
 
-      For an introduction to how MIAAIM is set up and implemented,
-      visit the :ref:`quick start <quick start to quick start>`
-      guide and implement some of the prototype use cases. For a complete
-      description of the project, check our paper on xxx.
+      Before using this software, please read the relevant background for each
+      workflow in the pipeline in the :ref:`Workflows <Workflows to Workflows>` section.
+      For a complete description of the project, check our preprint on xxx.
 
 .. note::
    MIAAIM is under active development! To update your current version, pull the

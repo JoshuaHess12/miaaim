@@ -3,8 +3,10 @@
 Installation
 ============
 
-MIAAIM uses nextflow, which requires `Java 8 or later
+MIAAIM is implemented in nextflow, which requires `Java 8 or later
 <http://www.oracle.com/technetwork/java/javase/downloads/index.html>`_.
+To install MIAAIM on your machine, follow the steps below for your operating system:
+
 
 Linux / OS X
 ^^^^^^^^^^^^

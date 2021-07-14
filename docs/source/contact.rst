@@ -13,7 +13,7 @@ software:
    * - Name
      - Contact Information
    * - Joshua Hess
-     - `joshmhess12@gmail.com <joshmhess12@gmail.com>`_
+     - `jhess4@mgh.harvard.edu <jhess4@mgh.harvard.edu>`_
    * - Ruxandra Sîrbulescu
      - `rsirbulescu@mgh.harvard.edu <rsirbulescu@mgh.harvard.edu>`_
    * - Patrick Reeves
