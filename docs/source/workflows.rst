@@ -116,7 +116,7 @@ exported as an image with the :code:`ExportNifti1` function.
 High-Parameter Image Processing
 -------------------------------
 
-.. figure:: Figure2-5-panelA.pdf
+.. figure:: Figure2-5-panelA.png
    :width: 100%
 
 MIAAIM processes high-parameter images using a newly developed image
@@ -205,11 +205,11 @@ HDIprep Implementation Guide
 Image Registration (HDIreg)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: Figure2-5-panelB.pdf
+.. figure:: Figure2-5-panelB.png
    :width: 100%
 
 HDIreg Implementation Guide
---------------------
+---------------------------
 .. list-table:: HDIreg Implementation Guide
     :widths: 25 25
     :header-rows: 1
@@ -228,7 +228,7 @@ HDIreg Implementation Guide
 Tissue State Modelling (PatchMAP)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. figure:: Figure-4-2.pdf
+.. figure:: Figure-4-2.png
    :width: 100%
 
 .. _i-PatchMAP to i-PatchMAP:
