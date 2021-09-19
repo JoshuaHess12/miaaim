@@ -5,12 +5,6 @@ switch( params.proto ) {
 	case "prototype-001":
 		url = 'https://www.dropbox.com/sh/g1daajcl8o1mem1/AAB3zZjaQQK5eAOKT43U8zeZa?dl=0'
 		break
-  case "prototype-002":
-		url = 'https://www.dropbox.com/sh/qnyzf4jiqqfqd3l/AABvx6PPLdB5fIB23sxR7aUTa?dl=0'
-		break
-	case "prototype-003":
-		url = 'https://www.dropbox.com/sh/5jtfoacyi09punm/AAB-Eqj5SgDVzU9GE7K3SCWZa?dl=0'
-		break
   default:
 	error "Please enter a valid prototype image name"
 }
