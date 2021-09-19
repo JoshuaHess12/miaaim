@@ -42,4 +42,4 @@ sudo apt-get -y install git
 You should now be able to run nextflow and MIAAIM within your installed WSL!
 
 ## Funding
-This work is supported by philanthropic funding at the Vaccine and Immunotherapy Center. Josh Hess is supported by an [NSF Graduate Research Fellowship](https://nsfgrfp.org)
+This work is supported by philanthropic funding at the Vaccine and Immunotherapy Center. Joshua Hess is supported by the [NSF Graduate Research Fellowship](https://nsfgrfp.org) under grant no. 1746886.
