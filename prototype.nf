@@ -32,7 +32,7 @@ process downloadPrototype {
 // unzip input folder from dropbox
 process unzipInput {
 	// unzip input folder to get contents for MIAAIM pipeline
-    publishDir "${params.out}/${params.proto}/input", mode: 'copy'
+    publishDir "${params.out}/${params.proto}", mode: 'copy'
 
     input:
 	path i from test
